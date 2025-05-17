@@ -24,7 +24,7 @@ Also, feel free to check out my new rust project [Atlas](https://github.com/liam
 To use this library in your own NodeJS app, you can install it via `npm`.
 
 ```
-npm install @liamcottle/rustplus.js
+npm install https://github.com/dextermyles/rustplus.js.git#ac34d5c6e6c812960f6d7c53412b0827963cb29f
 ```
 
 ## Features
