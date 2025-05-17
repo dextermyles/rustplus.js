@@ -74,6 +74,9 @@ class RustPlus extends EventEmitter {
 
             this.websocket.on('message', (data) => {
 
+                console.log('RAW WebPacket:');
+                console.log(data);
+
                 // decode received message
                 try {
                     var message = this.AppMessage.decode(data);
