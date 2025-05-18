@@ -74,11 +74,15 @@ class RustPlus extends EventEmitter {
 
             this.websocket.on('message', (data) => {
 
-                console.log('RAW WebPacket:');
-                console.log(data);
-
                 // decode received message
                 try {
+
+                    if (data.length < 10) {
+                        const paddedData = Buffer.alloc(10);
+                        data.copy(paddedData);
+                        data = paddedData;
+                    }
+
                     var message = this.AppMessage.decode(data);
 
                     // check if received message is a response and if we have a callback registered for it
