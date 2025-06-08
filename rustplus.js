@@ -73,16 +73,8 @@ class RustPlus extends EventEmitter {
             });
 
             this.websocket.on('message', (data) => {
-
-                // decode received message
                 try {
-
-                    if (data.length < 10) {
-                        const paddedData = Buffer.alloc(10);
-                        data.copy(paddedData);
-                        data = paddedData;
-                    }
-
+                    // decode received message
                     var message = this.AppMessage.decode(data);
 
                     // check if received message is a response and if we have a callback registered for it
@@ -91,32 +83,28 @@ class RustPlus extends EventEmitter {
                         // get the callback for the response sequence
                         var callback = this.seqCallbacks[message.response.seq];
 
-                        // call the callback with the response message
-                        var result = callback(message);
+                        if (callback) {
+                            // call the callback with the response message
+                            var result = callback(message);
 
-                        // remove the callback
-                        delete this.seqCallbacks[message.response.seq];
+                            // remove the callback
+                            delete this.seqCallbacks[message.response.seq];
 
-                        // if callback returns true, don't fire message event
-                        if (result) {
-                            return;
+                            // if callback returns true, don't fire message event
+                            if (result) {
+                                return;
+                            }
                         }
-
                     }
 
                     // fire message event for received messages that aren't handled by callback
                     this.emit('message', this.AppMessage.decode(data));
                 }
                 catch (e) {
+                    console.log(e);
                     this.emit('error', e);
-                    if (e.stack) {
-                        console.error(e.stack)
-                    }
-                    if (e.line) {
-                        console.error(e.line)
-                    }
+                    return;
                 }
-
             });
 
             // fire event when disconnected
