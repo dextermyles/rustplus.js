@@ -73,38 +73,30 @@ class RustPlus extends EventEmitter {
             });
 
             this.websocket.on('message', (data) => {
-                try {
-                    // decode received message
-                    var message = this.AppMessage.decode(data);
+                // decode received message
+                var message = this.AppMessage.decode(data);
 
-                    // check if received message is a response and if we have a callback registered for it
-                    if (message.response && message.response.seq && this.seqCallbacks[message.response.seq]) {
+                // check if received message is a response and if we have a callback registered for it
+                if (message.response && message.response.seq && this.seqCallbacks[message.response.seq]) {
 
-                        // get the callback for the response sequence
-                        var callback = this.seqCallbacks[message.response.seq];
+                    // get the callback for the response sequence
+                    var callback = this.seqCallbacks[message.response.seq];
 
-                        if (callback) {
-                            // call the callback with the response message
-                            var result = callback(message);
+                    if (callback) {
+                        // call the callback with the response message
+                        var result = callback(message);
 
-                            // remove the callback
-                            delete this.seqCallbacks[message.response.seq];
+                        // remove the callback
+                        delete this.seqCallbacks[message.response.seq];
 
-                            // if callback returns true, don't fire message event
-                            if (result) {
-                                return;
-                            }
+                        // if callback returns true, don't fire message event
+                        if (result) {
+                            return;
                         }
                     }
-
-                    // fire message event for received messages that aren't handled by callback
-                    this.emit('message', this.AppMessage.decode(data));
                 }
-                catch (e) {
-                    console.log(e);
-                    this.emit('error', e);
-                    return;
-                }
+                // fire message event for received messages that aren't handled by callback
+                this.emit('message', this.AppMessage.decode(data));
             });
 
             // fire event when disconnected
